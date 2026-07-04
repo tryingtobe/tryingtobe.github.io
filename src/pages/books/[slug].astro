@@ -12,12 +12,36 @@ export function getStaticPaths() {
 const { book } = Astro.props;
 ---
 <BookLayout title={book.title} description={`by ${book.author}`}>
-	<p class="rating">{'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}</p>
+	<img
+		src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`}
+		alt={`Cover of ${book.title}`}
+		class="cover-large"
+	/>
+	<p class="rating">★ {book.rating.toFixed(2)}</p>
 	<p class="month">Read in {book.month}</p>
-	<p>{book.notes}</p>
+	{book.quote && <blockquote class="book-quote">{book.quote}</blockquote>}
+	{book.notes && <p>{book.notes}</p>}
 </BookLayout>
 
 <style>
-	.rating { color: var(--gold); letter-spacing: 2px; font-size: 20px; margin-bottom: 4px; }
-	.month { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+	.cover-large {
+		display: block;
+		max-width: 220px;
+		width: 100%;
+		height: auto;
+		border-radius: 6px;
+		margin: 0 auto 28px;
+	}
+	.rating { color: var(--gold); font-size: 20px; margin-bottom: 4px; text-align: center; }
+	.month { color: var(--muted); font-size: 14px; margin-bottom: 24px; text-align: center; }
+	.book-quote {
+		font-family: 'Cormorant Garamond', serif;
+		font-style: italic;
+		font-size: 1.4rem;
+		line-height: 1.4;
+		border-left: 2px solid var(--gold);
+		padding-left: 22px;
+		margin: 24px 0;
+		color: var(--text);
+	}
 </style>

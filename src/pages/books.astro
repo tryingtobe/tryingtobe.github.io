@@ -17,9 +17,17 @@ const grouped = monthOrder.map((month) => ({
 					{entry.items.map((book) => (
 						<li class="book-item">
 							<a href={`/books/${book.slug}`} class="book-link">
-								<div class="book-title">{book.title}</div>
-								<div class="book-author">by {book.author}</div>
-								<div class="book-rating">{'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}</div>
+								<img
+									src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg`}
+									alt={`Cover of ${book.title}`}
+									class="book-cover"
+									loading="lazy"
+								/>
+								<div class="book-info">
+									<div class="book-title">{book.title}</div>
+									<div class="book-author">by {book.author}</div>
+									<div class="book-rating">★ {book.rating.toFixed(2)}</div>
+								</div>
 							</a>
 						</li>
 					))}
@@ -41,9 +49,25 @@ const grouped = monthOrder.map((month) => ({
 	}
 	.book-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 20px; }
 	.book-item { padding: 12px 0; border-bottom: 1px dashed var(--line); }
-	.book-link { text-decoration: none; color: inherit; display: block; transition: opacity .2s; }
+	.book-link {
+		text-decoration: none;
+		color: inherit;
+		display: flex;
+		gap: 16px;
+		align-items: flex-start;
+		transition: opacity .2s;
+	}
 	.book-link:hover { opacity: 0.75; }
+	.book-cover {
+		width: 60px;
+		height: 90px;
+		object-fit: cover;
+		border-radius: 4px;
+		background: var(--line);
+		flex-shrink: 0;
+	}
+	.book-info { flex: 1; }
 	.book-title { font-size: 18px; font-weight: 600; }
 	.book-author { color: var(--muted); font-size: 14px; margin-bottom: 4px; }
-	.book-rating { color: var(--gold); letter-spacing: 2px; }
+	.book-rating { color: var(--gold); }
 </style>
