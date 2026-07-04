@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Blog — ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="wrap">
+				<div class="blog-head">
+					<span class="kicker">The Archive</span>
+					<h1 class="blog-title display">The <span class="i">Blog</span></h1>
+				</div>
+				<ul class="post-list">
+					{posts.map((post) => (
+						<li>
+							<a href={`/blog/${post.id}/`} class="post-row">
+								<span class="post-title display">{post.data.title}</span>
+								<span class="post-date">
+									<FormattedDate date={post.data.pubDate} />
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.blog-head {
+		text-align: center;
+		padding: 60px 0 16px;
+	}
+	.blog-title {
+		font-size: clamp(44px, 7vw, 64px);
+		line-height: 1;
+		letter-spacing: -.01em;
+		margin: 10px 0 0;
+	}
+	.blog-title .i {
+		font-style: italic;
+		color: var(--gold);
+		font-weight: 500;
+	}
+	.post-list {
+		list-style: none;
+		margin: 32px 0 80px;
+		padding: 0;
+	}
+	.post-list li { border-top: 1px solid var(--line); }
+	.post-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		padding: 18px 0;
+		color: var(--text);
+		text-decoration: none;
+		transition: color .2s;
+	}
+	.post-row:hover .post-title { color: var(--gold); }
+	.post-title { font-size: 1.5rem; line-height: 1.1; }
+	.post-date {
+		color: var(--faint);
+		font-size: 14px;
+		font-family: 'Cormorant Garamond', serif;
+		text-transform: uppercase;
+		letter-spacing: .18em;
+		white-space: nowrap;
+		margin-left: 1rem;
+	}
+</style>

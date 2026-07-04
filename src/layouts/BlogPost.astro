@@ -1,0 +1,104 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, pubDate, updatedDate } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="reading article">
+				<a href="/blog" class="back">← Back to Blog</a>
+				<div class="art-head">
+					<div class="art-meta">
+						<FormattedDate date={pubDate} />
+						{updatedDate && <span>· Updated <FormattedDate date={updatedDate} /></span>}
+					</div>
+					<h1 class="art-title display">{title}</h1>
+					{description && <p class="art-sub">{description}</p>}
+				</div>
+				<hr class="art-rule" />
+				<div class="body">
+					<slot />
+				</div>
+				<div class="endmark">✦</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.article { padding: 32px 0 100px; }
+	.back {
+		display: inline-block;
+		color: var(--muted);
+		font-size: 15px;
+		letter-spacing: .03em;
+		text-decoration: none;
+		transition: color .2s;
+		margin-bottom: 40px;
+	}
+	.back:hover { color: var(--gold); }
+	.art-head { text-align: center; padding: 0 0 8px; }
+	.art-meta {
+		color: var(--faint);
+		font-family: 'Cormorant Garamond', serif;
+		text-transform: uppercase;
+		letter-spacing: .22em;
+		font-size: 12px;
+		margin-bottom: 16px;
+	}
+	.art-title {
+		font-size: clamp(36px, 6vw, 60px);
+		line-height: 1.02;
+		letter-spacing: -.01em;
+		margin: 0 auto;
+		max-width: 640px;
+	}
+	.art-sub {
+		font-style: italic;
+		font-size: 21px;
+		color: var(--text-soft);
+		margin: 18px auto 0;
+		max-width: 540px;
+	}
+	.art-rule { margin: 36px 0; }
+	.body :global(p:first-of-type::first-letter) {
+		font-family: 'Cormorant Garamond', serif;
+		font-weight: 600;
+		float: left;
+		font-size: 72px;
+		line-height: .72;
+		padding: 8px 12px 0 0;
+		color: var(--gold);
+	}
+	.body :global(p) { margin: 0 0 1.4em; }
+	.body :global(blockquote) {
+		font-family: 'Cormorant Garamond', serif;
+		font-style: italic;
+		font-size: 1.7rem;
+		line-height: 1.28;
+		border-left: 2px solid var(--gold);
+		padding-left: 26px;
+		margin: 42px 0;
+		color: var(--text);
+	}
+	.endmark {
+		text-align: center;
+		color: var(--gold);
+		font-size: 22px;
+		letter-spacing: .5em;
+		margin: 52px 0 0;
+	}
+</style>

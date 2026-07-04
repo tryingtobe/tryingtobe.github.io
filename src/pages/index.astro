@@ -1,0 +1,124 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import Header from '../components/Header.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 4);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="wrap">
+				<div class="masthead">
+					<h1 class="mast-title display">Bluebound <span class="i">Ink</span></h1>
+					<p class="mast-tag">A place for thoughts, stories, and whatever else wanders in.</p>
+				</div>
+
+				<div class="dblrule"></div>
+
+				<div class="feed">
+					<div class="sect-h">
+						<span class="kicker">Latest Posts</span>
+						<a href="/blog" class="browse">Browse all →</a>
+					</div>
+					<ul class="post-list">
+						{posts.map((post) => (
+							<li>
+								<a href={`/blog/${post.id}/`} class="post-row">
+									<span class="post-title display">{post.data.title}</span>
+									<span class="post-date">
+										<FormattedDate date={post.data.pubDate} />
+									</span>
+								</a>
+							</li>
+						))}
+					</ul>
+
+					<div class="subscribe-wrap">
+						<p class="sub-label kicker">Stay in the loop</p>
+						<iframe src="https://aaiym.substack.com/embed" width="100%" height="320" style="border: 1px solid var(--line); background: transparent; max-width: 500px; display: block; margin: 0 auto;" frameborder="0" scrolling="no"></iframe>
+					</div>
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.masthead {
+		text-align: center;
+		padding: 72px 0 28px;
+	}
+	.mast-title {
+		font-size: clamp(52px, 8vw, 80px);
+		line-height: .92;
+		letter-spacing: -.01em;
+		margin: 0;
+	}
+	.mast-title .i {
+		font-style: italic;
+		color: var(--gold);
+		font-weight: 500;
+	}
+	.mast-tag {
+		font-style: italic;
+		font-size: 21px;
+		color: var(--muted);
+		margin-top: 18px;
+	}
+	.feed { padding: 12px 0 80px; }
+	.sect-h {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		padding: 28px 0 8px;
+	}
+	.browse {
+		color: var(--gold);
+		font-style: italic;
+		font-size: 16px;
+	}
+	.post-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.post-list li { border-top: 1px solid var(--line); }
+	.post-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		padding: 18px 0;
+		color: var(--text);
+		text-decoration: none;
+		transition: color .2s;
+	}
+	.post-row:hover .post-title { color: var(--gold); }
+	.post-title { font-size: 1.5rem; line-height: 1.1; }
+	.post-date {
+		color: var(--faint);
+		font-size: 14px;
+		font-family: 'Cormorant Garamond', serif;
+		text-transform: uppercase;
+		letter-spacing: .18em;
+		white-space: nowrap;
+		margin-left: 1rem;
+	}
+	.subscribe-wrap {
+		margin-top: 60px;
+		text-align: center;
+	}
+	.sub-label { margin-bottom: 16px; display: block; }
+</style>

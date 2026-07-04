@@ -1,0 +1,88 @@
+---
+import HeaderLink from './HeaderLink.astro';
+---
+
+<header class="topbar">
+	<div class="wrap topbar-in">
+		<a href="/" class="mark display">
+			<span class="b">Bluebound</span> <span class="i">Ink</span>
+		</a>
+		<nav class="nav">
+			<HeaderLink href="/">Home</HeaderLink>
+			<HeaderLink href="/blog">Blog</HeaderLink>
+			<HeaderLink href="/about">About</HeaderLink>
+			<button class="themebtn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">☀</button>
+		</nav>
+	</div>
+</header>
+
+<script is:inline>
+	const btn = document.getElementById('theme-toggle');
+	function updateIcon() {
+		const isLight = document.body.classList.contains('light');
+		btn.textContent = isLight ? '☽' : '☀';
+	}
+	updateIcon();
+	btn.addEventListener('click', () => {
+		document.body.classList.toggle('light');
+		try { localStorage.setItem('bbi-theme', document.body.classList.contains('light') ? 'light' : 'dark'); } catch(e) {}
+		updateIcon();
+	});
+</script>
+
+<style>
+	.topbar {
+		position: sticky;
+		top: 0;
+		z-index: 20;
+		backdrop-filter: blur(10px);
+		background: var(--bar);
+		border-bottom: 1px solid var(--line);
+		transition: background .3s, border-color .3s;
+	}
+	.topbar-in {
+		height: 60px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.mark {
+		font-size: 20px;
+		letter-spacing: .01em;
+		text-decoration: none;
+	}
+	.mark .b { color: var(--text); }
+	.mark .i { color: var(--gold); font-style: italic; }
+	.nav {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+	}
+	.nav :global(a) {
+		color: var(--muted);
+		font-family: 'EB Garamond', serif;
+		font-size: 16px;
+		letter-spacing: .02em;
+		text-decoration: none;
+		transition: color .2s;
+	}
+	.nav :global(a:hover),
+	.nav :global(a.active) {
+		color: var(--gold);
+	}
+	.themebtn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border: 1px solid var(--line);
+		border-radius: 50%;
+		background: none;
+		color: var(--muted);
+		font-size: 15px;
+		cursor: pointer;
+		transition: color .2s, border-color .2s;
+	}
+	.themebtn:hover { color: var(--gold); }
+</style>
