@@ -1,0 +1,51 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+interface Props {
+	title: string;
+	description?: string;
+}
+const { title, description } = Astro.props;
+---
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="reading article">
+				<div class="art-head">
+					<h1 class="art-title display">{title}</h1>
+					{description && <p class="art-sub">{description}</p>}
+				</div>
+				<hr class="art-rule" />
+				<div class="body">
+					<slot />
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
+<style>
+	.article { padding: 32px 0 100px; }
+	.art-head { text-align: center; padding: 0 0 8px; }
+	.art-title {
+		font-size: clamp(36px, 6vw, 60px);
+		line-height: 1.02;
+		letter-spacing: -.01em;
+		margin: 0 auto;
+		max-width: 640px;
+	}
+	.art-sub {
+		font-style: italic;
+		font-size: 21px;
+		color: var(--text-soft);
+		margin: 18px auto 0;
+		max-width: 540px;
+	}
+	.art-rule { margin: 36px 0; }
+	.body :global(p) { margin: 0 0 1.4em; }
+</style>

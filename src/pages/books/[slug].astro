@@ -1,0 +1,23 @@
+---
+import BookLayout from '../../layouts/BookLayout.astro';
+import { books } from '../../data/books';
+
+export function getStaticPaths() {
+	return books.map((book) => ({
+		params: { slug: book.slug },
+		props: { book },
+	}));
+}
+
+const { book } = Astro.props;
+---
+<BookLayout title={book.title} description={`by ${book.author}`}>
+	<p class="rating">{'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}</p>
+	<p class="month">Read in {book.month}</p>
+	<p>{book.notes}</p>
+</BookLayout>
+
+<style>
+	.rating { color: var(--gold); letter-spacing: 2px; font-size: 20px; margin-bottom: 4px; }
+	.month { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+</style>

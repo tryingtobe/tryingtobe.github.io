@@ -1,15 +1,49 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import BookLayout from '../layouts/BookLayout.astro';
+import { books } from '../data/books';
+
+const monthOrder = [...new Set(books.map((b) => b.month))];
+const grouped = monthOrder.map((month) => ({
+	month,
+	items: books.filter((b) => b.month === month),
+})).reverse();
 ---
-<Layout
-	title="Books"
-	description="A collection of books by Bluebound Ink"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		This page will showcase books published under Bluebound Ink. Add your book titles,
-		covers, descriptions, and links to purchase or read more here.
-	</p>
-</Layout>
+<BookLayout title="Books" description="A monthly reading log">
+	<div class="reading-log">
+		{grouped.map((entry) => (
+			<section class="month-block">
+				<h2 class="month-title">{entry.month}</h2>
+				<ul class="book-list">
+					{entry.items.map((book) => (
+						<li class="book-item">
+							<a href={`/books/${book.slug}`} class="book-link">
+								<div class="book-title">{book.title}</div>
+								<div class="book-author">by {book.author}</div>
+								<div class="book-rating">{'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}</div>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		))}
+	</div>
+</BookLayout>
+
+<style>
+	.reading-log { display: flex; flex-direction: column; gap: 40px; }
+	.month-title {
+		font-family: 'EB Garamond', serif;
+		font-size: 26px;
+		color: var(--gold);
+		border-bottom: 1px solid var(--line);
+		padding-bottom: 8px;
+		margin-bottom: 16px;
+	}
+	.book-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+	.book-item { padding: 12px 0; border-bottom: 1px dashed var(--line); }
+	.book-link { text-decoration: none; color: inherit; display: block; transition: opacity .2s; }
+	.book-link:hover { opacity: 0.75; }
+	.book-title { font-size: 18px; font-weight: 600; }
+	.book-author { color: var(--muted); font-size: 14px; margin-bottom: 4px; }
+	.book-rating { color: var(--gold); letter-spacing: 2px; }
+</style>
