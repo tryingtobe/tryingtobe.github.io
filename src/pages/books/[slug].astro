@@ -17,10 +17,11 @@ const { book } = Astro.props;
 		alt={`Cover of ${book.title}`}
 		class="cover-large"
 	/>
-	<p class="rating">★ {book.rating.toFixed(2)}</p>
-	<p class="month">Read in {book.month}</p>
-	{book.quote && <blockquote class="book-quote">{book.quote}</blockquote>}
-	{book.notes && <p>{book.notes}</p>}
+	<div class="center-block">
+		<p class="meta-line">★ {book.rating.toFixed(2)} <span class="sep">|</span> {book.month}</p>
+		{book.quote && <blockquote class="book-quote">{book.quote}</blockquote>}
+	</div>
+	{book.notes && <p class="notes">{book.notes}</p>}
 </BookLayout>
 
 <style>
@@ -32,16 +33,32 @@ const { book } = Astro.props;
 		border-radius: 6px;
 		margin: 0 auto 28px;
 	}
-	.rating { color: var(--gold); font-size: 20px; margin-bottom: 4px; text-align: center; }
-	.month { color: var(--muted); font-size: 14px; margin-bottom: 24px; text-align: center; }
+	.center-block {
+		text-align: center;
+		max-width: 540px;
+		margin: 0 auto;
+	}
+	.meta-line {
+		color: var(--gold);
+		font-size: 16px;
+		margin-bottom: 24px;
+	}
+	.meta-line .sep {
+		color: var(--gold);
+		margin: 0 20px;
+	}
 	.book-quote {
 		font-family: 'Cormorant Garamond', serif;
 		font-style: italic;
 		font-size: 1.4rem;
 		line-height: 1.4;
-		border-left: 2px solid var(--gold);
-		padding-left: 22px;
-		margin: 24px 0;
+		margin: 24px auto;
 		color: var(--text);
+		border-left: none;
+		padding-left: 0;
+	}
+	.notes {
+		max-width: 540px;
+		margin: 0 auto;
 	}
 </style>
