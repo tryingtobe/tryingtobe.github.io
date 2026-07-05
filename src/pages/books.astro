@@ -18,7 +18,7 @@ const grouped = monthOrder.map((month) => ({
 						<li class="book-item">
 							<a href={`/books/${book.slug}`} class="book-link">
 								<img
-									src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg`}
+									src={book.coverUrl || `https://covers.openlibrary.org/b/isbn/${book.isbn}-M.jpg`}
 									alt={`Cover of ${book.title}`}
 									class="book-cover"
 									loading="lazy"
@@ -53,7 +53,7 @@ const grouped = monthOrder.map((month) => ({
 		text-decoration: none;
 		color: inherit;
 		display: flex;
-		gap: 16px;
+		gap: 8px;
 		align-items: flex-start;
 		transition: opacity .2s;
 	}
@@ -67,7 +67,7 @@ const grouped = monthOrder.map((month) => ({
 		flex-shrink: 0;
 	}
 	.book-info { flex: 1; }
-	.book-title { font-size: 18px; font-weight: 600; }
+	.book-title { font-size: 17px; font-weight: 400; font-family: 'EB Garamond', serif; }
 	.book-author { color: var(--muted); font-size: 14px; margin-bottom: 4px; }
 	.book-rating { color: var(--gold); }
 </style>

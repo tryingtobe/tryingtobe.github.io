@@ -10,16 +10,17 @@ export function getStaticPaths() {
 }
 
 const { book } = Astro.props;
+const coverSrc = book.coverUrl || `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`;
 ---
 <BookLayout title={book.title} description={`by ${book.author}`}>
 	<img
-		src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`}
+		src={coverSrc}
 		alt={`Cover of ${book.title}`}
 		class="cover-large"
 	/>
 	<div class="center-block">
 		<p class="meta-line">★ {book.rating.toFixed(2)} <span class="sep">|</span> {book.month}</p>
-		{book.quote && <blockquote class="book-quote">{book.quote}</blockquote>}
+		{book.quote && <blockquote class="book-quote">"{book.quote}"</blockquote>}
 	</div>
 	{book.notes && <p class="notes">{book.notes}</p>}
 </BookLayout>
