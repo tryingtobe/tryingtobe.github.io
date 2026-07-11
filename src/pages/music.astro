@@ -1,15 +1,224 @@
+﻿---
+import BookLayout from "../layouts/BookLayout.astro";
+import { nowPlaying, musicLog, favoriteAlbums } from "../data/music";
+
+const shelfAlbums = await Promise.all(
+favoriteAlbums.map(async (album) => {
+try {
+const res = await fetch(`https://open.spotify.com/oembed?url=https://open.spotify.com/album/${album.spotifyId}`);
+const data = await res.json();
+return { spotifyId: album.spotifyId, title: data.title || "Unknown album", thumbnail: data.thumbnail_url || "" };
+} catch (e) {
+return { spotifyId: album.spotifyId, title: "Unavailable", thumbnail: "" };
+}
+})
+);
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
----
-<Layout
-	title="Music"
-	description="Music by Bluebound Ink"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		This page will showcase music related to Bluebound Ink. Add tracks, albums,
-		streaming links, or embedded players here.
-	</p>
-</Layout>
+<BookLayout title="Music" description="A monthly listening log">
+<div class="now-playing">
+<a href={nowPlaying.spotifyId ? `https://open.spotify.com/track/${nowPlaying.spotifyId}` : undefined} class="now-playing-link">
+<img src={nowPlaying.albumArt} alt={`Album art for ${nowPlaying.title}`} class="now-playing-art" />
+<div class="now-playing-info">
+<span class="now-playing-kicker">currently listening</span>
+<div class="now-playing-title">{nowPlaying.title}</div>
+<div class="now-playing-artist">{nowPlaying.artist}</div>
+<div class="eq">
+<span></span><span></span><span></span><span></span>
+</div>
+</div>
+</a>
+</div>
+
+<div class="dblrule"></div>
+
+<div class="shelf-section">
+<div class="shelf-header">
+<span class="kicker">Albums I love</span>
+<div class="shelf-arrows">
+<button class="shelf-arrow" data-dir="-1" aria-label="Scroll left">&lsaquo;</button>
+<button class="shelf-arrow" data-dir="1" aria-label="Scroll right">&rsaquo;</button>
+</div>
+</div>
+<div class="shelf" id="album-shelf">
+{shelfAlbums.map((album) => (
+<a href={`https://open.spotify.com/album/${album.spotifyId}`} class="shelf-item" title={album.title}>
+<img src={album.thumbnail} alt={album.title} loading="lazy" />
+</a>
+))}
+</div>
+</div>
+
+<script>
+const shelf = document.getElementById("album-shelf");
+document.querySelectorAll(".shelf-arrow").forEach((btn) => {
+btn.addEventListener("click", () => {
+const dir = Number(btn.getAttribute("data-dir"));
+shelf?.scrollBy({ left: dir * 320, behavior: "smooth" });
+});
+});
+</script>
+
+<div class="dblrule"></div>
+
+<div class="listening-log">
+{musicLog.map((entry) => (
+<section class="month-block">
+<h2 class="month-title">{entry.month}</h2>
+
+{entry.playlistId && (
+<div class="playlist-embed">
+<iframe src={`https://open.spotify.com/embed/playlist/${entry.playlistId}?utm_source=generator&theme=0`} width="100%" height="152" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
+)}
+
+{entry.albums && entry.albums.length > 0 && (
+<ul class="album-list">
+{entry.albums.map((album) => (
+<li class="album-item">
+<div class="album-embed">
+<iframe src={`https://open.spotify.com/embed/album/${album.spotifyId}?utm_source=generator&theme=0`} width="100%" height="152" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</div>
+<div class="album-info">
+<div class="album-title">{album.title}</div>
+<div class="album-artist">by {album.artist}</div>
+{album.rating && <div class="album-rating">&#9733; {album.rating.toFixed(1)}</div>}
+<p class="album-review">{album.review}</p>
+</div>
+</li>
+))}
+</ul>
+)}
+</section>
+))}
+</div>
+</BookLayout>
+
+<style>
+.now-playing { padding: 8px 0 32px; }
+.now-playing-link {
+display: flex;
+align-items: center;
+gap: 20px;
+text-decoration: none;
+color: inherit;
+max-width: 480px;
+}
+.now-playing-art {
+width: 84px;
+height: 84px;
+border-radius: 8px;
+object-fit: cover;
+flex-shrink: 0;
+background: var(--line);
+}
+.now-playing-kicker {
+font-size: 12px;
+letter-spacing: .16em;
+text-transform: uppercase;
+color: var(--gold);
+}
+.now-playing-title {
+font-family: "EB Garamond", serif;
+font-size: 20px;
+margin-top: 4px;
+}
+.now-playing-artist { color: var(--muted); font-size: 14px; }
+.eq {
+display: flex;
+align-items: flex-end;
+gap: 3px;
+height: 14px;
+margin-top: 8px;
+}
+.eq span {
+width: 3px;
+background: var(--gold);
+animation: bounce 1s ease-in-out infinite;
+}
+.eq span:nth-child(1) { height: 40%; animation-delay: 0s; }
+.eq span:nth-child(2) { height: 100%; animation-delay: .15s; }
+.eq span:nth-child(3) { height: 60%; animation-delay: .3s; }
+.eq span:nth-child(4) { height: 80%; animation-delay: .45s; }
+@keyframes bounce {
+0%, 100% { transform: scaleY(0.4); }
+50% { transform: scaleY(1); }
+}
+
+.shelf-section { padding: 28px 0; }
+.shelf-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 16px;
+}
+.shelf-arrows { display: flex; gap: 8px; }
+.shelf-arrow {
+width: 32px;
+height: 32px;
+border-radius: 50%;
+border: 1px solid var(--line);
+background: transparent;
+color: var(--gold);
+font-size: 18px;
+line-height: 1;
+cursor: pointer;
+transition: background .2s;
+}
+.shelf-arrow:hover { background: var(--line); }
+.shelf {
+display: flex;
+gap: 16px;
+overflow-x: auto;
+scroll-snap-type: x proximity;
+padding-bottom: 12px;
+-webkit-overflow-scrolling: touch;
+}
+.shelf::-webkit-scrollbar { height: 6px; }
+.shelf::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+.shelf-item {
+flex: 0 0 auto;
+scroll-snap-align: start;
+display: block;
+border-radius: 6px;
+overflow: hidden;
+transition: transform .2s;
+}
+.shelf-item:hover { transform: translateY(-4px); }
+.shelf-item img {
+width: 140px;
+height: 140px;
+object-fit: cover;
+display: block;
+background: var(--line);
+border-radius: 6px;
+}
+
+.listening-log { display: flex; flex-direction: column; gap: 48px; padding-top: 8px; }
+.month-title {
+font-family: "EB Garamond", serif;
+font-size: 26px;
+color: var(--gold);
+border-bottom: 1px solid var(--line);
+padding-bottom: 8px;
+margin-bottom: 20px;
+}
+.playlist-embed { border-radius: 12px; overflow: hidden; margin-bottom: 24px; }
+.playlist-embed iframe { display: block; border: none; }
+
+.album-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 28px; }
+.album-item {
+display: flex;
+gap: 20px;
+padding-bottom: 24px;
+border-bottom: 1px dashed var(--line);
+flex-wrap: wrap;
+}
+.album-embed { flex: 0 0 300px; border-radius: 12px; overflow: hidden; }
+.album-embed iframe { display: block; border: none; }
+.album-info { flex: 1; min-width: 220px; }
+.album-title { font-size: 18px; font-weight: 400; font-family: "EB Garamond", serif; }
+.album-artist { color: var(--muted); font-size: 14px; margin-bottom: 4px; }
+.album-rating { color: var(--gold); margin-bottom: 8px; }
+.album-review { font-style: italic; color: var(--text); font-size: 15px; line-height: 1.5; }
+</style>
+
