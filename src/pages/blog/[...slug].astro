@@ -1,0 +1,45 @@
+---
+import { getCollection } from "astro:content";
+import BlogPost from "../../layouts/BlogPost.astro";
+
+export async function getStaticPaths() {
+const posts = await getCollection("blog");
+return posts.map((post) => ({
+params: { slug: post.id },
+props: { post },
+}));
+}
+
+const { post } = Astro.props;
+const { title, pubDate } = post.data;
+---
+<BlogPost title={title} description="This story is still being written." pubDate={pubDate}>
+<div class="coming-soon">
+<span class="cs-icon">&#10022;</span>
+<p class="cs-line">This one's still being written.</p>
+<p class="cs-sub">Check back soon -- "{title}" is coming.</p>
+</div>
+</BlogPost>
+
+<style>
+.coming-soon {
+text-align: center;
+padding: 60px 20px;
+}
+.cs-icon {
+display: block;
+color: var(--gold);
+font-size: 22px;
+margin-bottom: 24px;
+}
+.cs-line {
+font-family: "EB Garamond", serif;
+font-size: 24px;
+margin: 0 0 12px;
+}
+.cs-sub {
+color: var(--muted);
+font-style: italic;
+font-size: 16px;
+}
+</style>
